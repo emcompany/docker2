@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StudentHub | Student Management</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #1e293b;
+        }
+
+        header p {
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 15px #00000008;
+        }
+
+        .stat-card h2 {
+            font-size: 28px;
+            color: #4f46e5;
+            margin-top: 10px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 3px 15px #00000008;
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dbe1eb;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: 2px solid #818cf8;
+            border-color: #4f46e5;
+        }
+
+        button {
+            border: none;
+            padding: 11px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .save-btn {
+            background: #4f46e5;
+            color: white;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background: #3730a3;
+        }
+
+        .cancel-btn {
+            background: #e2e8f0;
+            color: #334155;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .student-header h2 {
+            margin: 0;
+        }
+
+        .search {
+            max-width: 220px;
+            margin: 0;
+        }
+
+        .student {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 17px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .student h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .student p {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .edit-btn:hover {
+            background: #c7d2fe;
+        }
+
+        .delete-btn:hover {
+            background: #fecaca;
+        }
+
+        #status {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .empty {
+            color: #94a3b8;
+            text-align: center;
+            padding: 35px 10px;
+        }
+
+        @media (max-width: 700px) {
+
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .student {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .student-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .search {
+                max-width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>StudentHub 🎓</h1>
+            <p>Manage your students in one place.</p>
+        </header>
+
+
+        <!-- Statistics -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+                <p>Total Students</p>
+                <h2 id="total">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Database Status</p>
+                <h2>Connected</h2>
+            </div>
+
+        </div>
+
+
+        <div class="main-content">
+
+
+            <!-- Add / Edit Form -->
+
+            <div class="card">
+
+                <h2 id="form-title">Add New Student</h2>
+
+                <form id="student-form">
+
+                    <label>Student Name</label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Enter student name"
+                        maxlength="100"
+                        required
+                    >
+
+                    <label>Course</label>
+
+                    <input
+                        type="text"
+                        id="course"
+                        placeholder="Enter course"
+                        maxlength="100"
+                        required
+                    >
+
+                    <button type="submit" class="save-btn" id="submit-btn">
+                        Add Student
+                    </button>
+
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        id="cancel-btn"
+                        hidden
+                    >
+                        Cancel Edit
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- Student List -->
+
+            <div class="card">
+
+                <div class="student-header">
+
+                    <h2>Student Directory</h2>
+
+                    <input
+                        type="search"
+                        class="search"
+                        id="search"
+                        placeholder="Search students..."
+                    >
+
+                </div>
+
+                <p id="status">Loading students...</p>
+
+                <div id="student-list"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const API = "/api/items";
+
+        const form = document.getElementById("student-form");
+        const nameInput = document.getElementById("name");
+        const courseInput = document.getElementById("course");
+
+        const studentList = document.getElementById("student-list");
+        const total = document.getElementById("total");
+        const statusText = document.getElementById("status");
+
+        const submitBtn = document.getElementById("submit-btn");
+        const cancelBtn = document.getElementById("cancel-btn");
+        const formTitle = document.getElementById("form-title");
+
+        let students = [];
+        let editingId = null;
+
+
+        // Fetch all students
+
+        async function loadStudents() {
+
+            try {
+
+                const response = await fetch(API);
+
+                if (!response.ok) {
+                    throw new Error("Could not fetch students");
+                }
+
+                students = await response.json();
+
+                total.textContent = students.length;
+
+                displayStudents();
+
+                statusText.textContent =
+                    "Showing " + students.length + " student(s)";
+
+            }
+
+            catch (error) {
+
+                statusText.textContent = "Failed to connect to API.";
+
+                console.error(error);
+
+            }
+
+        }
+
+
+        // Display students
+
+        function displayStudents() {
+
+            const search = document
+                .getElementById("search")
+                .value.toLowerCase();
+
+            const filtered = students.filter(student =>
+                student.name.toLowerCase().includes(search) ||
+                student.course.toLowerCase().includes(search)
+            );
+
+            studentList.replaceChildren();
+
+            if (filtered.length === 0) {
+
+                const empty = document.createElement("p");
+                empty.className = "empty";
+                empty.textContent = students.length
+                    ? "No matching students found."
+                    : "No students yet. Add your first student!";
+
+                studentList.appendChild(empty);
+                return;
+
+            }
+
+            filtered.forEach(student => {
+
+                const card = document.createElement("div");
+                card.className = "student";
+
+                const details = document.createElement("div");
+
+                const heading = document.createElement("h3");
+                heading.textContent = student.name;
+
+                const course = document.createElement("p");
+                course.textContent = student.course + " · ID: " + student.id;
+
+                details.append(heading, course);
+
+                const actions = document.createElement("div");
+                actions.className = "actions";
+
+                const editBtn = document.createElement("button");
+                editBtn.className = "edit-btn";
+                editBtn.textContent = "Edit";
+
+                editBtn.addEventListener("click", () => {
+                    editStudent(student);
+                });
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.className = "delete-btn";
+                deleteBtn.textContent = "Delete";
+
+                deleteBtn.addEventListener("click", () => {
+                    deleteStudent(student.id);
+                });
+
+                actions.append(editBtn, deleteBtn);
+
+                card.append(details, actions);
+
+                studentList.appendChild(card);
+
+            });
+
+        }
+
+
+        // Add or update student
+
+        form.addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const student = {
+                name: nameInput.value.trim(),
+                course: courseInput.value.trim()
+            };
+
+            if (!student.name || !student.course) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            const isEditing = editingId !== null;
+
+            const url = isEditing
+                ? `${API}/${editingId}`
+                : API;
+
+            const method = isEditing ? "PUT" : "POST";
+
+            try {
+
+                const response = await fetch(url, {
+
+                    method: method,
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(student)
+
+                });
+
+                if (!response.ok) {
+                    throw new Error("Unable to save student");
+                }
+
+                form.reset();
+
+                resetForm();
+
+                await loadStudents();
+
+            }
+
+            catch (error) {
+
+                alert(error.message);
+
+            }
+
+        });
+
+
+        // Edit student
+
+        function editStudent(student) {
+
+            editingId = student.id;
+
+            nameInput.value = student.name;
+            courseInput.value = student.course;
+
+            formTitle.textContent = "Edit Student";
+
+            submitBtn.textContent = "Update Student";
+
+            cancelBtn.hidden = false;
+
+            nameInput.focus();
+
+        }
+
+
+        // Cancel editing
+
+        function resetForm() {
+
+            editingId = null;
+
+            formTitle.textContent = "Add New Student";
+
+            submitBtn.textContent = "Add Student";
+
+            cancelBtn.hidden = true;
+
+            form.reset();
+
+        }
+
+
+        cancelBtn.addEventListener("click", resetForm);
+
+
+        // Delete student
+
+        async function deleteStudent(id) {
+
+            if (!confirm("Are you sure you want to delete this student?")) {
+                return;
+            }
+
+            try {
+
+                const response = await fetch(`${API}/${id}`, {
+                    method: "DELETE"
+                });
+
+                if (!response.ok) {
+                    throw new Error("Could not delete student");
+                }
+
+                if (editingId === id) {
+                    resetForm();
+                }
+
+                await loadStudents();
+
+            }
+
+            catch (error) {
+
+                alert(error.message);
+
+            }
+
+        }
+
+
+        // Search students
+
+        document.getElementById("search").addEventListener(
+            "input",
+            displayStudents
+        );
+
+
+        // Load students when page opens
+
+        loadStudents();
+
+    </script>
+
+</body>
+
+</html>
